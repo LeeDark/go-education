@@ -2,12 +2,17 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 )
 
 func main() {
-	http.HandleFunc("/hello", hello)
-	http.ListenAndServe(":8090", nil)
+	mux := http.NewServeMux()
+
+	mux.HandleFunc("/hello", hello)
+
+	log.Println("Listening...")
+	http.ListenAndServe(":8090", mux)
 }
 
 func hello(w http.ResponseWriter, req *http.Request) {
