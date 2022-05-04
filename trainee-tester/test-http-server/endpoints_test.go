@@ -7,8 +7,7 @@ import (
 )
 
 func TestPing(t *testing.T) {
-	mux := http.NewServeMux()
-	routes(mux)
+	mux := setEndpoints()
 
 	req, err := http.NewRequest("GET", "/ping", nil)
 	if err != nil {

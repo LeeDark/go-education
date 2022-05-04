@@ -8,8 +8,7 @@ import (
 )
 
 func main() {
-	mux := http.NewServeMux()
-	routes(mux)
+	mux := setEndpoints()
 
 	server := &http.Server{
 		Addr:           ":8090",

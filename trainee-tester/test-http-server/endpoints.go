@@ -7,10 +7,12 @@ import (
 	"net/http"
 )
 
-func routes(mux *http.ServeMux) {
+func setEndpoints() *http.ServeMux {
+	mux := http.NewServeMux()
 	mux.HandleFunc("/", home)
 	mux.HandleFunc("/ping", ping)
 	mux.HandleFunc("/hello", hello)
+	return mux
 }
 
 func sendJSON(w http.ResponseWriter, data interface{}) error {
