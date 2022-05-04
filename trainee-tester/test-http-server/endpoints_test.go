@@ -42,3 +42,17 @@ func TestPingClient(t *testing.T) {
 		t.Errorf("HTTP Status expected: 200, got: %d", res.StatusCode)
 	}
 }
+
+func BenchmarkPing(b *testing.B) {
+	mux := setEndpoints()
+
+	r, _ := http.NewRequest("GET", "/ping", nil)
+	w := httptest.NewRecorder()
+
+	b.ReportAllocs()
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		mux.ServeHTTP(w, r)
+	}
+}
