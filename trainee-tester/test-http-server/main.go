@@ -41,7 +41,7 @@ func home(w http.ResponseWriter, req *http.Request) {
 // Passive endpoint = HTTP Server gives JSON (XML) data = Frontend uses this JSON (XML) data
 func ping(w http.ResponseWriter, req *http.Request) {
 	//log.Println("Got ping")
-	fmt.Fprintf(w, "{ \"answer\": \"pong\"}")
+	fmt.Fprintf(w, "{ \"answer\": \"pong\" }")
 }
 
 func hello(w http.ResponseWriter, req *http.Request) {
@@ -49,8 +49,8 @@ func hello(w http.ResponseWriter, req *http.Request) {
 
 	name := req.URL.Query().Get("name")
 	if name == "" {
-		fmt.Fprintf(w, "{ \"answer\": \"error\"}")
+		fmt.Fprintf(w, "{ \"answer\": \"error\" }")
 	}
 
-	fmt.Fprintf(w, "{ \"answer\": \"%s\"}", name)
+	fmt.Fprintf(w, "{ \"answer\": \"%s\" }", name)
 }
