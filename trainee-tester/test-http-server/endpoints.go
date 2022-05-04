@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -10,6 +11,13 @@ func routes(mux *http.ServeMux) {
 	mux.HandleFunc("/", home)
 	mux.HandleFunc("/ping", ping)
 	mux.HandleFunc("/hello", hello)
+}
+
+func sendJSON(w http.ResponseWriter, data interface{}) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	// TODO: add error handling
+	return json.NewEncoder(w).Encode(&data)
 }
 
 // Active endpoint = HTTP Server gives HTML page
@@ -25,7 +33,9 @@ func home(w http.ResponseWriter, req *http.Request) {
 // Passive endpoint = HTTP Server gives JSON (XML) data = Frontend uses this JSON (XML) data
 func ping(w http.ResponseWriter, req *http.Request) {
 	//log.Println("Got ping")
-	fmt.Fprintf(w, "{ \"answer\": \"pong\" }")
+	sendJSON(w, struct {
+		Answer string `json:"answer"`
+	}{Answer: "pong"})
 }
 
 func hello(w http.ResponseWriter, req *http.Request) {
@@ -33,8 +43,13 @@ func hello(w http.ResponseWriter, req *http.Request) {
 
 	name := req.URL.Query().Get("name")
 	if name == "" {
-		fmt.Fprintf(w, "{ \"answer\": \"error\" }")
+		sendJSON(w, struct {
+			Answer string `json:"answer"`
+		}{Answer: "Param name was not found"})
+		return
 	}
 
-	fmt.Fprintf(w, "{ \"answer\": \"%s\" }", name)
+	sendJSON(w, struct {
+		Answer string `json:"answer"`
+	}{Answer: name})
 }
