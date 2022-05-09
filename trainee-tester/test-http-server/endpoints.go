@@ -19,7 +19,11 @@ func sendJSON(w http.ResponseWriter, data interface{}) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	// TODO: add error handling
-	return json.NewEncoder(w).Encode(&data)
+	err := json.NewEncoder(w).Encode(&data)
+	if err != nil {
+		log.Println("ERROR:", err)
+	}
+	return err
 }
 
 // Active endpoint = HTTP Server gives HTML page
@@ -35,9 +39,10 @@ func home(w http.ResponseWriter, req *http.Request) {
 // Passive endpoint = HTTP Server gives JSON (XML) data = Frontend uses this JSON (XML) data
 func ping(w http.ResponseWriter, req *http.Request) {
 	//log.Println("Got ping")
-	sendJSON(w, struct {
-		Answer string `json:"answer"`
-	}{Answer: "pong"})
+	// sendJSON(w, struct {
+	// 	Answer string `json:"answer"`
+	// }{Answer: "pong"})
+	sendJSON(w, map[string]string{"answer": "pong"})
 }
 
 func hello(w http.ResponseWriter, req *http.Request) {
@@ -45,13 +50,15 @@ func hello(w http.ResponseWriter, req *http.Request) {
 
 	name := req.URL.Query().Get("name")
 	if name == "" {
-		sendJSON(w, struct {
-			Answer string `json:"answer"`
-		}{Answer: "Param name was not found"})
+		// sendJSON(w, struct {
+		// 	Answer string `json:"answer"`
+		// }{Answer: "Param name was not found"})
+		sendJSON(w, map[string]string{"answer": "Param name was not found"})
 		return
 	}
 
-	sendJSON(w, struct {
-		Answer string `json:"answer"`
-	}{Answer: name})
+	// sendJSON(w, struct {
+	// 	Answer string `json:"answer"`
+	// }{Answer: name})
+	sendJSON(w, map[string]string{"answer": name})
 }
