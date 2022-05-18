@@ -4,14 +4,19 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"math/rand"
 	"net/http"
+	"time"
 )
 
 func setEndpoints() *http.ServeMux {
 	mux := http.NewServeMux()
+
 	mux.HandleFunc("/", home)
 	mux.HandleFunc("/ping", ping)
 	mux.HandleFunc("/hello", hello)
+	mux.HandleFunc("/timeout", timeout)
+
 	return mux
 }
 
@@ -46,8 +51,7 @@ func ping(w http.ResponseWriter, req *http.Request) {
 }
 
 func hello(w http.ResponseWriter, req *http.Request) {
-	log.Println(req.URL)
-
+	// log.Println(req.URL)
 	name := req.URL.Query().Get("name")
 	if name == "" {
 		// sendJSON(w, struct {
@@ -61,4 +65,15 @@ func hello(w http.ResponseWriter, req *http.Request) {
 	// 	Answer string `json:"answer"`
 	// }{Answer: name})
 	sendJSON(w, map[string]string{"answer": name})
+}
+
+func randomTimeout(from, to int) time.Duration {
+	return time.Duration(rand.Intn(to-from)+from) * time.Millisecond
+}
+
+func timeout(w http.ResponseWriter, req *http.Request) {
+	// randomizer 0.5-1 sec
+	time.Sleep(randomTimeout(500, 1000))
+
+	sendJSON(w, map[string]string{"answer": "pong"})
 }
