@@ -22,9 +22,9 @@ func setEndpoints() *http.ServeMux {
 	return mux
 }
 
-func sendJSON(statisCode int, w http.ResponseWriter, data interface{}) error {
+func sendJSON(statusCode int, w http.ResponseWriter, data interface{}) error {
 	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(statisCode)
+	w.WriteHeader(statusCode)
 	// TODO: add error handling
 	err := json.NewEncoder(w).Encode(&data)
 	if err != nil {
