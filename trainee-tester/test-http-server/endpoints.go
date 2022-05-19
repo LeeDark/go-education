@@ -20,9 +20,9 @@ func setEndpoints() *http.ServeMux {
 	return mux
 }
 
-func sendJSON(w http.ResponseWriter, data interface{}) error {
+func sendJSON(statisCode int, w http.ResponseWriter, data interface{}) error {
 	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
+	w.WriteHeader(statisCode)
 	// TODO: add error handling
 	err := json.NewEncoder(w).Encode(&data)
 	if err != nil {
@@ -47,7 +47,7 @@ func ping(w http.ResponseWriter, req *http.Request) {
 	// sendJSON(w, struct {
 	// 	Answer string `json:"answer"`
 	// }{Answer: "pong"})
-	sendJSON(w, map[string]string{"answer": "pong"})
+	sendJSON(http.StatusOK, w, map[string]string{"answer": "pong"})
 }
 
 func hello(w http.ResponseWriter, req *http.Request) {
@@ -57,14 +57,14 @@ func hello(w http.ResponseWriter, req *http.Request) {
 		// sendJSON(w, struct {
 		// 	Answer string `json:"answer"`
 		// }{Answer: "Param name was not found"})
-		sendJSON(w, map[string]string{"answer": "Param name was not found"})
+		sendJSON(http.StatusBadRequest, w, map[string]string{"answer": "Param name was not found"})
 		return
 	}
 
 	// sendJSON(w, struct {
 	// 	Answer string `json:"answer"`
 	// }{Answer: name})
-	sendJSON(w, map[string]string{"answer": name})
+	sendJSON(http.StatusOK, w, map[string]string{"answer": name})
 }
 
 func randomTimeout(from, to int) time.Duration {
@@ -75,5 +75,5 @@ func timeout(w http.ResponseWriter, req *http.Request) {
 	// randomizer 0.5-1 sec
 	time.Sleep(randomTimeout(500, 1000))
 
-	sendJSON(w, map[string]string{"answer": "pong"})
+	sendJSON(http.StatusOK, w, map[string]string{"answer": "pong"})
 }

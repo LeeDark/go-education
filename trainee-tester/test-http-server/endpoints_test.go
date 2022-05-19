@@ -4,8 +4,12 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"strings"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestPingSimple(t *testing.T) {
@@ -21,10 +25,42 @@ func TestPingSimple(t *testing.T) {
 
 	if !strings.Contains(wr.Body.String(), "pong") {
 		t.Errorf(
-			`response body "%s" does not contain "NAME"`,
+			"response body \"%s\" does not contain \"NAME\"",
 			wr.Body.String(),
 		)
 	}
+}
+
+func TestPingAssert(t *testing.T) {
+	// 1
+	req := httptest.NewRequest("GET", "/ping", nil)
+
+	// 2
+	wr := httptest.NewRecorder()
+	ping(wr, req)
+
+	// 3
+	assert.Equal(t, wr.Code, 201,
+		fmt.Sprintf("HTTP Status expected: 200, got: %d", wr.Code))
+
+	assert.Contains(t, wr.Body.String(), "ping",
+		fmt.Sprintf("response body \"%s\" does not contain \"NAME\"", wr.Body.String()))
+}
+
+func TestPingRequire(t *testing.T) {
+	// 1
+	req := httptest.NewRequest("GET", "/ping", nil)
+
+	// 2
+	wr := httptest.NewRecorder()
+	ping(wr, req)
+
+	// 3
+	require.Equal(t, wr.Code, 201,
+		fmt.Sprintf("HTTP Status expected: 200, got: %d", wr.Code))
+
+	assert.Contains(t, wr.Body.String(), "ping",
+		fmt.Sprintf("response body \"%s\" does not contain \"NAME\"", wr.Body.String()))
 }
 
 func TestPingSub(t *testing.T) {
@@ -102,4 +138,12 @@ func BenchmarkPing(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		mux.ServeHTTP(w, r)
 	}
+}
+
+func TestHelloHttp(t *testing.T) {
+	query1, _ := url.ParseQuery("name=Sergey")
+	assert.HTTPSuccess(t, hello, "GET", "http://localhost:8090/hello", query1)
+
+	query2, _ := url.ParseQuery("nam=Sergey")
+	assert.HTTPStatusCode(t, hello, "GET", "http://localhost:8090/hello", query2, http.StatusBadRequest)
 }
