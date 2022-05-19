@@ -17,6 +17,8 @@ func setEndpoints() *http.ServeMux {
 	mux.HandleFunc("/hello", hello)
 	mux.HandleFunc("/timeout", timeout)
 
+	mux.HandleFunc("/cdbsource", cdbSourceHandler)
+
 	return mux
 }
 
