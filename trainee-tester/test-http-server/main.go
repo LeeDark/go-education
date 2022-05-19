@@ -8,6 +8,7 @@ import (
 )
 
 func main() {
+	// router := SetRoutes()
 	mux := setEndpoints()
 
 	server := &http.Server{
@@ -18,7 +19,7 @@ func main() {
 		MaxHeaderBytes: 1 << 20,
 	}
 
-	log.Println(runtime.NumCPU())
+	log.Println("Num CPU:", runtime.NumCPU())
 	log.Println("Listening...")
 	server.ListenAndServe()
 }
