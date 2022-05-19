@@ -1,7 +1,6 @@
 package main
 
 import (
-	"log"
 	"net/http"
 	"net/url"
 
@@ -24,31 +23,27 @@ func cdbSourceHandler(w http.ResponseWriter, req *http.Request) {
 	name := req.URL.Query().Get("name")
 	number := req.URL.Query().Get("number")
 
-	// TODO: logic
-	response, err := cdbSourceLogic(name, number)
+	// response: JSON {"number": "123456789", "mcc": MCC, "mnc": MNC, "ported": isPorted}
+	response, err := cdbSourceQuery(name, number)
 	if err != nil {
 		sendJSON(http.StatusInternalServerError, w, nil)
 	}
-
-	// response: JSON {"number": "123456789", "mcc": MCC, "mnc": MNC, "ported": isPorted}
-
 	sendJSON(http.StatusOK, w, response)
 }
 
-func cdbSourceLogic(name, number string) (response *CdbSourceResponse, err error) {
+func cdbSourceQuery(name, number string) (response *CdbSourceResponse, err error) {
 	switch name {
 	case "akton":
-		response, err = cdbSourceSearch("akton.cdb", number)
+		response, err = cdbSourceQueryEngine("akton.cdb", number)
 	default:
 		response = &CdbSourceResponse{
 			Number: number,
 		}
 	}
-
 	return
 }
 
-func cdbSourceSearch(cdbFile, number string) (response *CdbSourceResponse, err error) {
+func cdbSourceQueryEngine(cdbFile, number string) (response *CdbSourceResponse, err error) {
 	response = &CdbSourceResponse{
 		Number: number,
 		Ported: false,
@@ -63,7 +58,7 @@ func cdbSourceSearch(cdbFile, number string) (response *CdbSourceResponse, err e
 		return
 	}
 
-	log.Println(rec)
+	//log.Println(rec)
 
 	recMap, err := url.ParseQuery(rec)
 	if err != nil {
@@ -71,7 +66,7 @@ func cdbSourceSearch(cdbFile, number string) (response *CdbSourceResponse, err e
 		return
 	}
 
-	log.Println(recMap)
+	//log.Println(recMap)
 
 	// mcc=219&mnc=010
 	// TODO: error handling
