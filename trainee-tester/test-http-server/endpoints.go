@@ -7,19 +7,23 @@ import (
 	"math/rand"
 	"net/http"
 	"time"
+
+	"github.com/LeeDark/go-education/trainee-tester/test-http-server/middleware"
 )
 
-func setEndpoints() *http.ServeMux {
+func setEndpoints() http.Handler {
 	mux := http.NewServeMux()
 
 	mux.HandleFunc("/", home)
 	mux.HandleFunc("/ping", ping)
-	mux.HandleFunc("/hello", hello)
+	mux.HandleFunc("/hello", middleware.AuthName(hello))
 	mux.HandleFunc("/timeout", timeout)
 
 	mux.HandleFunc("/cdbsource", cdbSourceHandler)
 
-	return mux
+	handler := middleware.Logging(mux)
+
+	return handler
 }
 
 func sendJSON(statusCode int, w http.ResponseWriter, data interface{}) error {
@@ -45,10 +49,10 @@ func home(w http.ResponseWriter, req *http.Request) {
 
 // Passive endpoint = HTTP Server gives JSON (XML) data = Frontend uses this JSON (XML) data
 func ping(w http.ResponseWriter, req *http.Request) {
-	//log.Println("Got ping")
-	// sendJSON(w, struct {
-	// 	Answer string `json:"answer"`
-	// }{Answer: "pong"})
+	if req.Method != "GET" {
+		sendJSON(http.StatusMethodNotAllowed, w, map[string]string{"answer": "Method should be GET"})
+		return
+	}
 	sendJSON(http.StatusOK, w, map[string]string{"answer": "pong"})
 }
 
