@@ -4,12 +4,15 @@ import (
 	"net/http"
 
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 )
 
 func setEndpoints() *echo.Echo {
 	e := echo.New()
+	e.Use(middleware.Logger())
 	e.GET("/", home)
 	e.GET("/ping", ping)
+	e.GET("/hello", hello)
 	return e
 }
 
@@ -29,4 +32,15 @@ func ping(c echo.Context) error {
 	return c.JSON(http.StatusOK, struct {
 		Answer string `json:"answer"`
 	}{Answer: "pong"})
+}
+
+func hello(c echo.Context) error {
+	name := c.QueryParam("name")
+	if name == "" {
+		c.Error(echo.ErrBadRequest)
+		return echo.ErrBadRequest
+	}
+	return c.JSON(http.StatusOK, struct {
+		Answer string `json:"answer"`
+	}{Answer: name})
 }
