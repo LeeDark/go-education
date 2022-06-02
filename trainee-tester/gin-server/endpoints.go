@@ -8,10 +8,11 @@ import (
 
 func setEndpoints() *gin.Engine {
 	// FIXME: use Release mode for benchmarking
-	gin.SetMode(gin.ReleaseMode)
+	//gin.SetMode(gin.ReleaseMode)
+
 	e := gin.New()
-	// FIXME: don't use Logger middleware for benchmarking
-	e.Use(gin.Recovery())
+	e.Use(gin.Logger(), gin.Recovery())
+
 	e.LoadHTMLGlob("templates/*")
 
 	e.GET("/", home)
