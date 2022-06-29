@@ -79,13 +79,11 @@ func main() {
 		os.Exit(1)
 	}
 
+	log.Printf("promtail.NewClient: %v\n", loki)
+
 	for i := 1; i < 5; i++ {
 		tstamp := time.Now().String()
-		loki.Infof("source = %s time = %s, i = %d\n",
-			source_name, tstamp, i)
-
-		// ... аналогично для Infof и Errorf ...
-
+		loki.Infof("source = %s time = %s, i = %d\n", source_name, tstamp, i)
 		time.Sleep(1 * time.Second)
 	}
 
